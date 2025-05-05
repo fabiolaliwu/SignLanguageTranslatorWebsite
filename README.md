@@ -22,3 +22,12 @@ Install required MediaPipe utilities:
 ```bash
 npm install @mediapipe/hands @mediapipe/drawing_utils
 npm install @mediapipe/camera_utils
+```
+
+### Backend Setup:
+``` bash
+pip install flask flask-cors tensorflow numpy
+pip install opencv-python
+pip install opencv-python-headless
+pip install mediapipe
+```
