@@ -9,7 +9,7 @@ function App() {
           <h3>ASL Translator</h3>
         </div>
         <div className='cameraBody'>
-          <CameraFeed />
+          <CameraFeed/>
         </div>
       </div>
     </>

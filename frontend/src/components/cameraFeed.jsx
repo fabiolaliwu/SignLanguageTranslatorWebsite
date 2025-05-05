@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Hands } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
@@ -7,6 +7,7 @@ import * as HAND_CONNECTIONS from "@mediapipe/hands";
 export function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [letter, setLetter] = useState("");
 
   useEffect(() => {
     const hands = new Hands({
@@ -46,9 +47,24 @@ export function CameraFeed() {
             lineWidth: 1,
           });
 
-          // Optional: log 63 values (x, y, z) for debugging or backend
+          // Flatten the landmarks
           const flatLandmarks = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
-          console.log("Landmark vector (63D):", flatLandmarks);
+
+          // Send to Flask backend, containing the 63 MediaPipe hand landmark values
+          fetch("http://localhost:5000/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ landmarks: flatLandmarks }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.letter) {
+                setLetter(data.letter);
+              }
+            })
+            .catch((err) => {
+              console.error("Prediction error:", err);
+            });
         }
       }
     });
@@ -66,7 +82,17 @@ export function CameraFeed() {
   }, []);
 
   return (
-    <div style={{ position: "relative", width: 640, height: 480 }}>
+    <div style={{ position: "relative", width: 640, height: 520 }}>
+      <div
+        style={{
+          fontSize: "2rem",
+          marginBottom: "10px",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Detected Letter: {letter}
+      </div>
       <video
         ref={videoRef}
         style={{ display: "none" }}

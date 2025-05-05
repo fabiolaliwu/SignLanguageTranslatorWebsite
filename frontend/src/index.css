@@ -2,6 +2,7 @@
   background-color: rgba(255, 245, 194, 0.853);
   padding: 0px;
   height: 100%;
+  box-sizing: border-box;
 }
 
 .wholePage {
@@ -19,5 +20,8 @@
 }
 
 .cameraBody {
+  display: flex;
+  justify-content: center;
+  flex: 1;
   padding: 0px;
 }
