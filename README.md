@@ -31,3 +31,10 @@ pip install opencv-python
 pip install opencv-python-headless
 pip install mediapipe
 ```
+
+### Running it:
+```
+cd frontend
+npm install
+npm run dev
+```
