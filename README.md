@@ -1,7 +1,7 @@
 # 🧠 Sign Language Translator Website
 
 A real-time ASL (American Sign Language) to English translator using **MediaPipe**, **TensorFlow**, **React**, and **Flask**. The app captures hand landmarks via webcam, classifies ASL letters, and translates them into English text.
-
+![alt text](image.png)
 ---
 
 ## 🖥️ Features
