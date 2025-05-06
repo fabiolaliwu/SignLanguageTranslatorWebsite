@@ -31,8 +31,6 @@ export function CameraFeed() {
 
       ctx.save();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.scale(-1, 1); // Mirror horizontally
-      ctx.translate(-canvas.width, 0);
       ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
       ctx.restore();
 

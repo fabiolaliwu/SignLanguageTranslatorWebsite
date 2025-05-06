@@ -18,7 +18,6 @@ for letter in string.ascii_uppercase:
     sample_count = 0
     while True:
         ret, frame = cap.read()
-        frame = cv2.flip(frame, 1)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(rgb)
 
@@ -49,5 +48,5 @@ cv2.destroyAllWindows()
 # Save to CSV
 df = pd.DataFrame(all_data)
 df['label'] = all_labels
-df.to_csv("landmarks.csv", index=False)
-print("✅ Data saved to landmarks.csv")
+df.to_csv("asl_landmarks.csv", index=False)
+print("✅ Data saved to asl_landmarks.csv")

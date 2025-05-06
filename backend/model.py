@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.utils import to_categorical
+from keras import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 
 # Load dataset
 df = pd.read_csv("asl_landmarks.csv")  # Must contain 63 features + 1 label column
