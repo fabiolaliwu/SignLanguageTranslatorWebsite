@@ -98,7 +98,6 @@ export function CameraFeed() {
           textAlign: "center",
         }}
       >
-        ASL Translator
       </div>
       <video
         ref={videoRef}
@@ -116,7 +115,7 @@ export function CameraFeed() {
           height: 480,
         }}
       />
-      <div className="output" style={{ textAlign: "center", marginTop: "10px" }}>
+      <div className="output" style={{ textAlign: "center", marginTop: "75px" }}>
         Detected Letters: {letters.join(" ")}
       </div>
     </div>
