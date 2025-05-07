@@ -39,13 +39,13 @@ pip install keras
 ```
 
 ### 🏃🏻‍♀️‍➡️ Running it:
-backend: 
+backend terminal: 
 ```
 cd backend
 python app.py
 ```
 
-frontend:
+frontend terminal:
 ```
 cd frontend
 npm install
