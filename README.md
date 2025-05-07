@@ -12,7 +12,6 @@ A real-time ASL (American Sign Language) to English translator using **MediaPipe
 - Frontend built with **React**  
 - Backend powered by **Flask** and **TensorFlow**  
 - Hand tracking using **MediaPipe**
-
 ---
 
 ## 🚀 Getting Started
