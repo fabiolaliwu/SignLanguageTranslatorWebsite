@@ -36,4 +36,3 @@ model.fit(X_train, y_train, epochs=30, validation_data=(X_test, y_test))
 # Save the trained model
 model.save("asl_mlp_model.h5")
 print("✅ Model saved as asl_mlp_model.h5")
-
