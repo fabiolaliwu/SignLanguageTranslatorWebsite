@@ -8,6 +8,8 @@ export function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [letter, setLetter] = useState("");
+  const [frameCount, setFrameCount] = useState(0);
+  const FRAME_INTERVAL = 10; // Adjust this value to make it slower/faster
 
   useEffect(() => {
     const hands = new Hands({
@@ -29,10 +31,8 @@ export function CameraFeed() {
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
 
-      ctx.save();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
-      ctx.restore();
 
       if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
@@ -45,24 +45,16 @@ export function CameraFeed() {
             lineWidth: 1,
           });
 
-          // Flatten the landmarks
           const flatLandmarks = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
 
-          // Send to Flask backend, containing the 63 MediaPipe hand landmark values
-          fetch("http://localhost:5000/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ landmarks: flatLandmarks }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.letter) {
-                setLetter(data.letter);
-              }
-            })
-            .catch((err) => {
-              console.error("Prediction error:", err);
-            });
+          // Only predict every FRAME_INTERVAL frames
+          setFrameCount((prevCount) => {
+            if (prevCount >= FRAME_INTERVAL) {
+              setFrameCount(0);
+              fetchPrediction(flatLandmarks);
+            }
+            return prevCount + 1;
+          });
         }
       }
     });
@@ -78,6 +70,24 @@ export function CameraFeed() {
       camera.start();
     }
   }, []);
+
+  // Fetch prediction from backend
+  const fetchPrediction = (landmarks) => {
+    fetch("http://localhost:5000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ landmarks }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.letter) {
+          setLetter(data.letter);
+        }
+      })
+      .catch((err) => {
+        console.error("Prediction error:", err);
+      });
+  };
 
   return (
     <div style={{ position: "relative", width: 640, height: 520 }}>
