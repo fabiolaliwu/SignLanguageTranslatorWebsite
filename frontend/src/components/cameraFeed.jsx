@@ -7,9 +7,9 @@ import * as HAND_CONNECTIONS from "@mediapipe/hands";
 export function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [letter, setLetter] = useState("");
+  const [letters, setLetters] = useState([]);
   const [frameCount, setFrameCount] = useState(0);
-  const FRAME_INTERVAL = 10; // Adjust this value to make it slower/faster
+  const FRAME_INTERVAL = 1;
 
   useEffect(() => {
     const hands = new Hands({
@@ -47,7 +47,6 @@ export function CameraFeed() {
 
           const flatLandmarks = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
 
-          // Only predict every FRAME_INTERVAL frames
           setFrameCount((prevCount) => {
             if (prevCount >= FRAME_INTERVAL) {
               setFrameCount(0);
@@ -71,7 +70,6 @@ export function CameraFeed() {
     }
   }, []);
 
-  // Fetch prediction from backend
   const fetchPrediction = (landmarks) => {
     fetch("http://localhost:5050/predict", {
       method: "POST",
@@ -81,7 +79,8 @@ export function CameraFeed() {
       .then((res) => res.json())
       .then((data) => {
         if (data.letter) {
-          setLetter(data.letter);
+          // Add letter to the history (limit to last 10)
+          setLetters((prev) => [...prev.slice(-9), data.letter]);
         }
       })
       .catch((err) => {
@@ -99,6 +98,7 @@ export function CameraFeed() {
           textAlign: "center",
         }}
       >
+        ASL Translator
       </div>
       <video
         ref={videoRef}
@@ -116,8 +116,8 @@ export function CameraFeed() {
           height: 480,
         }}
       />
-      <div className="output">
-        Detected Letters: {letter}
+      <div className="output" style={{ textAlign: "center", marginTop: "10px" }}>
+        Detected Letters: {letters.join(" ")}
       </div>
     </div>
   );
