@@ -73,7 +73,7 @@ export function CameraFeed() {
 
   // Fetch prediction from backend
   const fetchPrediction = (landmarks) => {
-    fetch("http://localhost:5000/predict", {
+    fetch("http://localhost:5050/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ landmarks }),
@@ -99,7 +99,6 @@ export function CameraFeed() {
           textAlign: "center",
         }}
       >
-        Detected Letter: {letter}
       </div>
       <video
         ref={videoRef}
@@ -117,6 +116,9 @@ export function CameraFeed() {
           height: 480,
         }}
       />
+      <div className="output">
+        Detected Letters: {letter}
+      </div>
     </div>
   );
 }

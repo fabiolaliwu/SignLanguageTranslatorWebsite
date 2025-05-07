@@ -25,3 +25,11 @@
   flex: 1;
   padding: 0px;
 }
+
+.output{
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  padding: 0px;
+}
