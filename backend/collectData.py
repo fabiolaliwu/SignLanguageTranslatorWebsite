@@ -2,15 +2,23 @@ import cv2
 import mediapipe as mp
 import pandas as pd
 import string
+import os
 
+# Constants
+csv_path = "asl_landmarks.csv"
+num_landmarks = 21
+coords_per_landmark = 3
+total_features = num_landmarks * coords_per_landmark
+column_names = [str(i) for i in range(total_features)] + ["label"]
+
+# Setup MediaPipe
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1)
 cap = cv2.VideoCapture(0)
 
+# Data collection
 all_data = []
-all_labels = []
 
-# Loop through letters A to Z
 for letter in string.ascii_uppercase:
     print(f"\nCollecting data for: {letter}")
     print("Press 's' to save a sample, 'q' to skip to next letter")
@@ -35,9 +43,12 @@ for letter in string.ascii_uppercase:
         if key == ord('s') and results.multi_hand_landmarks:
             hand_landmarks = results.multi_hand_landmarks[0]
             flat = [coord for lm in hand_landmarks.landmark for coord in (lm.x, lm.y, lm.z)]
-            all_data.append(flat)
-            all_labels.append(letter)
-            sample_count += 1
+            if len(flat) == total_features:
+                flat.append(letter)
+                all_data.append(flat)
+                sample_count += 1
+            else:
+                print("⚠️ Incomplete landmark data, sample skipped.")
 
         if key == ord('q'):
             break
@@ -45,8 +56,18 @@ for letter in string.ascii_uppercase:
 cap.release()
 cv2.destroyAllWindows()
 
-# Save to CSV
-df = pd.DataFrame(all_data)
-df['label'] = all_labels
-df.to_csv("asl_landmarks.csv", index=False)
-print("✅ Data saved to asl_landmarks.csv")
+# Create DataFrame
+df = pd.DataFrame(all_data, columns=column_names)
+
+# Ensure newline before appending (prevents corrupt last row)
+file_exists = os.path.exists(csv_path)
+if file_exists:
+    with open(csv_path, "ab+") as f:
+        f.seek(-1, os.SEEK_END)
+        last_byte = f.read(1)
+        if last_byte != b'\n':
+            f.write(b'\n')
+
+# Append to CSV
+df.to_csv(csv_path, mode='a', index=False, header=not file_exists)
+print("✅ Data appended to asl_landmarks.csv")

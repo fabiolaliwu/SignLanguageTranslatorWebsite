@@ -67,7 +67,7 @@ export function CameraFeed() {
       if (latestLandmarksRef.current) {
         fetchPrediction(latestLandmarksRef.current);
       }
-    }, 1000); // every 1 second
+    }, 3000); // every 3 second
 
     return () => clearInterval(interval);
   }, []);
