@@ -7,9 +7,8 @@ import * as HAND_CONNECTIONS from "@mediapipe/hands";
 export function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const latestLandmarksRef = useRef(null); // ✅ Store latest frame's landmarks
   const [letters, setLetters] = useState([]);
-  const [frameCount, setFrameCount] = useState(0);
-  const FRAME_INTERVAL = 1;
 
   useEffect(() => {
     const hands = new Hands({
@@ -34,28 +33,24 @@ export function CameraFeed() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-      if (results.multiHandLandmarks) {
-        for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(ctx, landmarks, HAND_CONNECTIONS.HAND_CONNECTIONS, {
-            color: "#00FF00",
-            lineWidth: 2,
-          });
-          drawLandmarks(ctx, landmarks, {
-            color: "#FF0000",
-            lineWidth: 1,
-          });
-
-          const flatLandmarks = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
-
-          setFrameCount((prevCount) => {
-            if (prevCount >= FRAME_INTERVAL) {
-              setFrameCount(0);
-              fetchPrediction(flatLandmarks);
-            }
-            return prevCount + 1;
-          });
-        }
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+      
+        drawConnectors(ctx, landmarks, HAND_CONNECTIONS.HAND_CONNECTIONS, {
+          color: "#00FF00",
+          lineWidth: 2,
+        });
+        drawLandmarks(ctx, landmarks, {
+          color: "#FF0000",
+          lineWidth: 1,
+        });
+      
+        const flat = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
+        latestLandmarksRef.current = flat; // ✅ Save if valid
+      } else {
+        latestLandmarksRef.current = null; // ✅ Clear if no hand
       }
+      
     });
 
     if (videoRef.current) {
@@ -68,6 +63,15 @@ export function CameraFeed() {
       });
       camera.start();
     }
+
+    // ✅ Detect every 5 seconds using interval
+    const interval = setInterval(() => {
+      if (latestLandmarksRef.current) {
+        fetchPrediction(latestLandmarksRef.current);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval); // ✅ Clean up
   }, []);
 
   const fetchPrediction = (landmarks) => {
@@ -79,7 +83,6 @@ export function CameraFeed() {
       .then((res) => res.json())
       .then((data) => {
         if (data.letter) {
-          // Add letter to the history (limit to last 10)
           setLetters((prev) => [...prev.slice(-9), data.letter]);
         }
       })
@@ -90,15 +93,6 @@ export function CameraFeed() {
 
   return (
     <div style={{ position: "relative", width: 640, height: 520 }}>
-      <div
-        style={{
-          fontSize: "2rem",
-          marginBottom: "10px",
-          fontWeight: "bold",
-          textAlign: "center",
-        }}
-      >
-      </div>
       <video
         ref={videoRef}
         style={{ display: "none" }}
