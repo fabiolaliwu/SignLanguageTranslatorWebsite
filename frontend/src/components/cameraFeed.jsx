@@ -7,7 +7,7 @@ import * as HAND_CONNECTIONS from "@mediapipe/hands";
 export function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const latestLandmarksRef = useRef(null); // ✅ Store latest frame's landmarks
+  const latestLandmarksRef = useRef(null);
   const [letters, setLetters] = useState([]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function CameraFeed() {
 
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const landmarks = results.multiHandLandmarks[0];
-      
+
         drawConnectors(ctx, landmarks, HAND_CONNECTIONS.HAND_CONNECTIONS, {
           color: "#00FF00",
           lineWidth: 2,
@@ -44,13 +44,12 @@ export function CameraFeed() {
           color: "#FF0000",
           lineWidth: 1,
         });
-      
+
         const flat = landmarks.flatMap(({ x, y, z }) => [x, y, z]);
-        latestLandmarksRef.current = flat; // ✅ Save if valid
+        latestLandmarksRef.current = flat;
       } else {
-        latestLandmarksRef.current = null; // ✅ Clear if no hand
+        latestLandmarksRef.current = null;
       }
-      
     });
 
     if (videoRef.current) {
@@ -64,14 +63,13 @@ export function CameraFeed() {
       camera.start();
     }
 
-    // ✅ Detect every 5 seconds using interval
     const interval = setInterval(() => {
       if (latestLandmarksRef.current) {
         fetchPrediction(latestLandmarksRef.current);
       }
-    }, 2000);
+    }, 1000); // every 1 second
 
-    return () => clearInterval(interval); // ✅ Clean up
+    return () => clearInterval(interval);
   }, []);
 
   const fetchPrediction = (landmarks) => {
@@ -83,7 +81,7 @@ export function CameraFeed() {
       .then((res) => res.json())
       .then((data) => {
         if (data.letter) {
-          setLetters((prev) => [...prev.slice(-9), data.letter]);
+          setLetters((prev) => [...prev, data.letter]);
         }
       })
       .catch((err) => {
@@ -91,8 +89,16 @@ export function CameraFeed() {
       });
   };
 
+  const handleBackspace = () => {
+    setLetters((prev) => prev.slice(0, -1));
+  };
+
+  const handleClearAll = () => {
+    setLetters([]);
+  };
+
   return (
-    <div style={{ position: "relative", width: 640, height: 520 }}>
+    <div style={{ position: "relative", width: 640, height: 580 }}>
       <video
         ref={videoRef}
         style={{ display: "none" }}
@@ -109,8 +115,44 @@ export function CameraFeed() {
           height: 480,
         }}
       />
-      <div className="output" style={{ textAlign: "center", marginTop: "75px" }}>
-        Detected Letters: {letters.join(" ")}
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          Detected Letters:
+        </div>
+        <div style={{ fontSize: "1.5rem", marginTop: "10px" }}>
+          {letters.join(" ")}
+          <div style={{ marginTop: "15px" }}>
+            <button
+              onClick={handleBackspace}
+              style={{
+                padding: "8px 16px",
+                fontSize: "1rem",
+                backgroundColor: "#ff9999",
+                border: "1px solid black",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginRight: "10px",
+                marginTop: "10px",
+              }}
+            >
+              ⌫ DELETE
+            </button>
+            <button
+              onClick={handleClearAll}
+              style={{
+                padding: "8px 16px",
+                fontSize: "1rem",
+                backgroundColor: "#ccffcc",
+                border: "1px solid black",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginTop: "10px",
+              }}
+            >
+              CLEAR
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
