@@ -4,11 +4,11 @@ import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as HAND_CONNECTIONS from "@mediapipe/hands";
 
-export function CameraFeed() {
+export function CameraFeed({setLetters}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const latestLandmarksRef = useRef(null);
-  const [letters, setLetters] = useState([]);
+  //const [letters, setLetters] = useState([]);
 
   useEffect(() => {
     const hands = new Hands({
@@ -89,14 +89,6 @@ export function CameraFeed() {
       });
   };
 
-  const handleBackspace = () => {
-    setLetters((prev) => prev.slice(0, -1));
-  };
-
-  const handleClearAll = () => {
-    setLetters([]);
-  };
-
   return (
     <div style={{ position: "relative", width: 640, height: 580 }}>
       <video
@@ -115,45 +107,7 @@ export function CameraFeed() {
           height: 480,
         }}
       />
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-          Detected Letters:
-        </div>
-        <div style={{ fontSize: "1.5rem", marginTop: "10px" }}>
-          {letters.join(" ")}
-          <div style={{ marginTop: "15px" }}>
-            <button
-              onClick={handleBackspace}
-              style={{
-                padding: "8px 16px",
-                fontSize: "1rem",
-                backgroundColor: "#ff9999",
-                border: "1px solid black",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginRight: "10px",
-                marginTop: "10px",
-              }}
-            >
-              ⌫ DELETE
-            </button>
-            <button
-              onClick={handleClearAll}
-              style={{
-                padding: "8px 16px",
-                fontSize: "1rem",
-                backgroundColor: "#ccffcc",
-                border: "1px solid black",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginTop: "10px",
-              }}
-            >
-              CLEAR
-            </button>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }
