@@ -35,7 +35,6 @@ pip install mediapipe
 pip install tensorflow
 pip install keras
 
-
 ```
 
 ### 🏃🏻‍♀️‍➡️ Running it:
@@ -49,5 +48,6 @@ frontend terminal:
 ```
 cd frontend
 npm install
+npm install react-router-dom
 npm run dev
 ```
