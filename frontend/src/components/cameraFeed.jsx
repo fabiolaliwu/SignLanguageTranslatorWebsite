@@ -67,7 +67,7 @@ export function CameraFeed({ setDetectedLetter, setLetters }) {
       if (latestLandmarksRef.current) {
         fetchPrediction(latestLandmarksRef.current);
       }
-    }, 3000); // every 3 second
+    }, 1000); // every 3 second
 
     return () => clearInterval(interval);
   }, []);
@@ -108,8 +108,7 @@ export function CameraFeed({ setDetectedLetter, setLetters }) {
           width: 640,
           height: 480,
         }}
-      />
-      
+      /> 
     </div>
   );
 }

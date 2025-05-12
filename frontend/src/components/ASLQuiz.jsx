@@ -29,34 +29,82 @@ export function ASLQuiz({ detectedLetter, setDetectedLetter }) {
             setFeedback('❌ Try again!');
         }
     }, [detectedLetter, quizLetter, setDetectedLetter]);
-
+   
     return (
-        <div className="quizPage">
+        <div className='wholePage'>
             <div className='logo'> 
                 <h3>ASL Quiz</h3>
             </div>
-            <div style={{ marginTop: '10px' }}>
-                <Link to="/">
-                    <button style={{
-                        padding: "8px 16px",
-                        fontSize: "1rem",
-                        backgroundColor: "#f1d6ff",
-                        border: "1px solid black",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        marginBottom: "10px",
-                    }}>Go to Home</button>
-                </Link>
-            </div>
-            <p>Sign the Letter: <span style={{fontWeight: 'bold', fontSize: '2rem'}}>{quizLetter}</span></p>
-            <p>
-                Detected Letter:{" "}
-                <span style={{fontWeight: 'bold', fontSize: '2rem', color: '#6a1b9a'}}>
-                    {detectedLetter ? detectedLetter.toUpperCase() : "None"}
-                </span>
-            </p>
             <div className='cameraBody'>
                 <CameraFeed setDetectedLetter={setDetectedLetter}/>
+                <div className='letterPart'>
+                    <div style={{ fontSize: "1.5rem", fontWeight: "bold", width: "100%"}}>
+                        Sign this letter:
+                    </div>
+                    <div style={{ 
+                        fontSize: "3rem", 
+                        fontWeight: "bold", 
+                        color: "#6a1b9a",
+                        margin: "20px 0"
+                    }}>
+                        {quizLetter}
+                    </div>
+                    <div style={{ fontSize: "1.5rem", fontWeight: "bold", width: "100%"}}>
+                        Your sign:
+                    </div>
+                    <div style={{ 
+                        fontSize: "2rem", 
+                        fontWeight: "bold", 
+                        color: "#6a1b9a",
+                        margin: "10px 0"
+                    }}>
+                        {detectedLetter ? detectedLetter.toUpperCase() : "None"}
+                    </div>
+                    <div style={{ 
+                        fontSize: "1.5rem", 
+                        fontWeight: "bold", 
+                        color: feedback.includes('✅') ? "#4CAF50" : "#f44336",
+                        margin: "10px 0"
+                    }}>
+                        {feedback}
+                    </div>
+                    <div className="letter-actions">
+                        <Link to="/">
+                            <button
+                                style={{
+                                    padding: "8px 16px",
+                                    fontSize: "1rem",
+                                    backgroundColor: "#f1d6ff",
+                                    border: "1px solid black",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    marginRight: "10px",
+                                    marginTop: "10px",
+                                }}
+                            >
+                                ← HOME
+                            </button>
+                        </Link>
+                        <button
+                            onClick={() => {
+                                setQuizLetter(letters[Math.floor(Math.random() * letters.length)]);
+                                setFeedback('');
+                                setDetectedLetter("");
+                            }}
+                            style={{
+                                padding: "8px 16px",
+                                fontSize: "1rem",
+                                backgroundColor: "#ccffcc",
+                                border: "1px solid black",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                marginTop: "10px",
+                            }}
+                        >
+                            NEXT LETTER
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     )
