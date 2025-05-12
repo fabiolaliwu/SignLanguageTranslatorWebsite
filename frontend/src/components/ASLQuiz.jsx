@@ -4,8 +4,31 @@ import { CameraFeed } from './cameraFeed';
 
 const letters = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
 
-export function ASLQuiz() {
-    
+export function ASLQuiz({ detectedLetter, setDetectedLetter }) {
+    const [quizLetter, setQuizLetter] = useState('');
+    const [feedback, setFeedback] = useState('');
+
+    // Pick a random letter when the component mounts or when quizLetter changes
+    useEffect(() => {
+        setQuizLetter(letters[Math.floor(Math.random() * letters.length)]);
+        setFeedback('');
+        setDetectedLetter(""); // Clear previous detection
+    }, []);
+
+    // Check for correct answer
+    useEffect(() => {
+        if (detectedLetter && detectedLetter.toUpperCase() === quizLetter) {
+            setFeedback('✅ Correct!');
+            // Move to next letter after a short delay
+            setTimeout(() => {
+                setQuizLetter(letters[Math.floor(Math.random() * letters.length)]);
+                setFeedback('');
+                setDetectedLetter("");
+            }, 1500);
+        } else if (detectedLetter) {
+            setFeedback('❌ Try again!');
+        }
+    }, [detectedLetter, quizLetter, setDetectedLetter]);
 
     return (
         <div className="quizPage">
@@ -25,9 +48,15 @@ export function ASLQuiz() {
                     }}>Go to Home</button>
                 </Link>
             </div>
-            <p>Sign the Letter: </p>
+            <p>Sign the Letter: <span style={{fontWeight: 'bold', fontSize: '2rem'}}>{quizLetter}</span></p>
+            <p>
+                Detected Letter:{" "}
+                <span style={{fontWeight: 'bold', fontSize: '2rem', color: '#6a1b9a'}}>
+                    {detectedLetter ? detectedLetter.toUpperCase() : "None"}
+                </span>
+            </p>
             <div className='cameraBody'>
-                <CameraFeed/>
+                <CameraFeed setDetectedLetter={setDetectedLetter}/>
             </div>
         </div>
     )

@@ -4,7 +4,7 @@ import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as HAND_CONNECTIONS from "@mediapipe/hands";
 
-export function CameraFeed({setLetters}) {
+export function CameraFeed({ setDetectedLetter, setLetters }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const latestLandmarksRef = useRef(null);
@@ -81,7 +81,9 @@ export function CameraFeed({setLetters}) {
       .then((res) => res.json())
       .then((data) => {
         if (data.letter) {
-          setLetters((prev) => [...prev, data.letter]);
+          if (setLetters) setLetters((prev) => [...prev, data.letter]);
+          if (setDetectedLetter) setDetectedLetter(data.letter);
+          console.log("Detected letter:", data.letter);
         }
       })
       .catch((err) => {
