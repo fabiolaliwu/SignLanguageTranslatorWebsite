@@ -4,15 +4,17 @@ import { CameraFeed } from "./components/cameraFeed";
 import { ASLQuiz } from "./components/ASLQuiz";
 import './App.css'
 
-function HomePage() {
-  const [letters, setLetters] = useState([]);
-
+function HomePage({ detectedLetter, setDetectedLetter, letters, setLetters }) {
   const handleBackspace = () => {
     setLetters((prev) => prev.slice(0, -1));
   };
 
   const handleClearAll = () => {
     setLetters([]);
+  };
+
+  const handleLetterDetected = (letter) => {
+    setDetectedLetter(letter);
   };
 
   return (
@@ -82,11 +84,21 @@ function HomePage() {
 }
 
 function App() {
+  const [detectedLetter, setDetectedLetter] = useState("");
+  const [letters, setLetters] = useState([]);
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/quiz" element={<ASLQuiz />} />
+        <Route path="/" element={
+          <HomePage
+            detectedLetter={detectedLetter}
+            setDetectedLetter={setDetectedLetter}
+            letters={letters}
+            setLetters={setLetters}
+          />
+        } />
+        <Route path="/quiz" element={<ASLQuiz detectedLetter={detectedLetter} setDetectedLetter={setDetectedLetter} />} />
       </Routes>
     </Router>
   );
