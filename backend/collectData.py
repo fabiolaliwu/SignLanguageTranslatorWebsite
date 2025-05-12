@@ -4,7 +4,7 @@ import pandas as pd
 import string
 import os
 
-# Constants
+
 csv_path = "asl_landmarks.csv"
 num_landmarks = 21
 coords_per_landmark = 3
@@ -16,7 +16,6 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1)
 cap = cv2.VideoCapture(0)
 
-# Data collection
 all_data = []
 
 for letter in string.ascii_uppercase:
@@ -48,7 +47,7 @@ for letter in string.ascii_uppercase:
                 all_data.append(flat)
                 sample_count += 1
             else:
-                print("⚠️ Incomplete landmark data, sample skipped.")
+                print("Incomplete landmark data, sample skipped.")
 
         if key == ord('q'):
             break
@@ -56,10 +55,10 @@ for letter in string.ascii_uppercase:
 cap.release()
 cv2.destroyAllWindows()
 
-# Create DataFrame
+
 df = pd.DataFrame(all_data, columns=column_names)
 
-# Ensure newline before appending (prevents corrupt last row)
+
 file_exists = os.path.exists(csv_path)
 if file_exists:
     with open(csv_path, "ab+") as f:
@@ -68,6 +67,6 @@ if file_exists:
         if last_byte != b'\n':
             f.write(b'\n')
 
-# Append to CSV
+
 df.to_csv(csv_path, mode='a', index=False, header=not file_exists)
 print("✅ Data appended to asl_landmarks.csv")

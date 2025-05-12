@@ -2,7 +2,6 @@ import numpy as np
 from keras.models import load_model
 
 model = load_model("asl_mlp_model.h5")
-
 labels = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 def predict_letter(landmarks):
